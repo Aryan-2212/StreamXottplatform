@@ -1,67 +1,76 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
-import { Play, Info, Search, User, ChevronRight, Plus, Volume2, VolumeX } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import {
+  ChevronRight,
+  Clapperboard,
+  Crown,
+  Flame,
+  Info,
+  Play,
+  Search,
+  Sparkles,
+  Star,
+  Tv2,
+  User,
+  Volume2,
+  VolumeX,
+} from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useApp } from '../context';
 import { mockContent } from '../data/mockData';
 import { Content } from '../types';
 import { HeroSkeleton, ContentRowSkeleton } from '../components/SkeletonLoader';
+import MediaCard from '../components/MediaCard';
 
 export default function Home() {
   const navigate = useNavigate();
-  const { preferences } = useApp();
+  const { preferences, profile } = useApp();
   const [heroIndex, setHeroIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
 
-  // Get hero content
-  const heroContent = mockContent.filter(c => c.isHero);
+  const heroContent = mockContent.filter((content) => content.isHero);
   const currentHero = heroContent[heroIndex];
 
-  // Get content by categories
-  const continueWatching = mockContent.filter(c => c.progress && c.progress > 0);
-  const trending = mockContent.filter(c => c.trending);
-  const includedMovies = mockContent.filter(c => c.type === 'movie' && c.accessType === 'included');
-  const premiumMovies = mockContent.filter(c => c.type === 'movie' && c.accessType === 'premium');
-  const tvShows = mockContent.filter(c => c.type === 'show');
-  const sports = mockContent.filter(c => c.type === 'sports');
-  const kids = mockContent.filter(c => c.type === 'kids');
+  const continueWatching = mockContent.filter((content) => content.progress && content.progress > 0);
+  const trending = mockContent.filter((content) => content.trending);
+  const includedMovies = mockContent.filter((content) => content.type === 'movie' && content.accessType === 'included');
+  const premiumMovies = mockContent.filter((content) => content.type === 'movie' && content.accessType === 'premium');
+  const tvShows = mockContent.filter((content) => content.type === 'show');
+  const sports = mockContent.filter((content) => content.type === 'sports');
+  const kids = mockContent.filter((content) => content.type === 'kids');
 
-  // Get smart recommendation label
   const getRecommendationLabel = () => {
     if (preferences.genres.length > 0) {
       const genre = preferences.genres[0];
       return `Because you like ${genre.charAt(0).toUpperCase() + genre.slice(1)}`;
     }
     if (preferences.languages.length > 0) {
-      const lang = preferences.languages[0];
-      return `Trending in ${lang.charAt(0).toUpperCase() + lang.slice(1)}`;
+      const language = preferences.languages[0];
+      return `Trending in ${language.charAt(0).toUpperCase() + language.slice(1)}`;
     }
     return 'Top Picks for You';
   };
 
-  // Handle scroll for navbar
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Rotate hero content & simulate loading
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000);
     const interval = setInterval(() => {
-      setHeroIndex((prev) => (prev + 1) % heroContent.length);
+      setHeroIndex((previous) => (previous + 1) % heroContent.length);
     }, 8000);
+
     return () => {
       clearTimeout(timer);
       clearInterval(interval);
     };
-  }, []);
+  }, [heroContent.length]);
 
   const handleContentClick = (content: Content) => {
     navigate(`/content/${content.id}`);
@@ -69,16 +78,16 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black text-white">
-        <nav className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-md">
-          <div className="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent">
+      <div className="min-h-screen bg-[#02060c] text-white">
+        <nav className="fixed left-0 right-0 top-0 z-50 bg-[#02060c]/85 backdrop-blur-md">
+          <div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+            <h1 className="bg-gradient-to-r from-cyan-300 to-cyan-500 bg-clip-text text-2xl font-bold text-transparent md:text-3xl">
               StreamX
             </h1>
           </div>
         </nav>
         <HeroSkeleton />
-        <div className="relative -mt-16 sm:-mt-24 space-y-8 pb-12">
+        <div className="relative mt-8 space-y-8 pb-12">
           <ContentRowSkeleton />
           <ContentRowSkeleton />
         </div>
@@ -87,198 +96,183 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Enhanced Navigation Header */}
-      <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled 
-          ? 'bg-black/95 backdrop-blur-md shadow-lg' 
-          : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent'
-      }`}>
-        <div className="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+    <div className="min-h-screen bg-[#02060c] text-white">
+      <nav
+        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
+          isScrolled ? 'bg-[#02060c]/94 shadow-lg backdrop-blur-md' : 'bg-gradient-to-b from-[#02060c]/92 via-[#02060c]/48 to-transparent'
+        }`}
+      >
+        <div className="flex items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-6 lg:gap-8">
-            <motion.h1 
-              className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent cursor-pointer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <motion.h1
+              className="cursor-pointer bg-gradient-to-r from-cyan-300 to-cyan-500 bg-clip-text text-2xl font-bold text-transparent md:text-3xl"
+              whileHover={{ scale: 1.04 }}
+              whileTap={{ scale: 0.96 }}
             >
               StreamX
             </motion.h1>
-            <div className="hidden md:flex gap-6 text-sm font-medium">
-              <button className="text-white hover:text-cyan-400 transition-colors relative group">
+            <div className="hidden gap-6 text-sm font-medium md:flex">
+              <button className="group relative text-white transition-colors hover:text-cyan-300">
                 Home
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-cyan-400 scale-x-100 transition-transform group-hover:scale-x-100" />
+                <span className="absolute -bottom-1 left-0 h-0.5 w-full scale-x-100 bg-cyan-400 transition-transform" />
               </button>
-              <button 
-                className="text-gray-300 hover:text-cyan-400 transition-colors relative group" 
+              <button
+                className="group relative text-gray-300 transition-colors hover:text-cyan-300"
                 onClick={() => navigate('/discovery')}
               >
                 Browse
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-cyan-400 scale-x-0 transition-transform group-hover:scale-x-100" />
+                <span className="absolute -bottom-1 left-0 h-0.5 w-full scale-x-0 bg-cyan-400 transition-transform group-hover:scale-x-100" />
               </button>
-              <button 
-                className="text-gray-300 hover:text-cyan-400 transition-colors relative group"
+              <button
+                className="group relative text-gray-300 transition-colors hover:text-cyan-300"
                 onClick={() => navigate('/watchlist')}
               >
                 My List
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-cyan-400 scale-x-0 transition-transform group-hover:scale-x-100" />
+                <span className="absolute -bottom-1 left-0 h-0.5 w-full scale-x-0 bg-cyan-400 transition-transform group-hover:scale-x-100" />
               </button>
             </div>
           </div>
+
           <div className="flex items-center gap-2 md:gap-3">
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => navigate('/discovery')}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors"
+              className="rounded-full border border-white/10 bg-white/6 p-2 transition-colors hover:bg-white/10"
             >
-              <Search className="w-5 h-5" />
+              <Search className="h-5 w-5" />
             </motion.button>
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => navigate('/profile')}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors"
+              className="rounded-full border border-white/10 bg-white/6 p-2 transition-colors hover:bg-white/10"
+              aria-label={profile.name}
             >
-              <User className="w-5 h-5" />
+              <User className="h-5 w-5" />
             </motion.button>
           </div>
         </div>
       </nav>
 
-      {/* Enhanced Hero Section */}
-      <div className="relative h-[75vh] sm:h-[85vh] overflow-hidden">
+      <div className="relative h-[78vh] overflow-hidden pt-22 sm:h-[86vh] sm:pt-24">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentHero.id}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.2 }}
+            transition={{ duration: 1.1 }}
             className="absolute inset-0"
           >
-            {/* Background Image with Ken Burns Effect */}
             <motion.div
               initial={{ scale: 1 }}
-              animate={{ scale: 1.1 }}
+              animate={{ scale: 1.08 }}
               transition={{ duration: 20, ease: 'linear' }}
               className="absolute inset-0 bg-cover bg-center"
-              style={{ 
-                backgroundImage: `url(${currentHero.thumbnail})`,
-                filter: 'brightness(0.7)'
+              style={{
+                backgroundImage: `url(${currentHero.backdrop || currentHero.thumbnail})`,
+                filter: 'brightness(0.78)',
               }}
             />
-            
-            {/* Enhanced Gradients */}
-            <div className="absolute inset-0 gradient-hero" />
-            <div className="absolute inset-0 gradient-hero-bottom" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#02060c] via-[#02060c]/72 to-[#02060c]/18" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#02060c] via-[#02060c]/18 to-[#02060c]/28" />
           </motion.div>
         </AnimatePresence>
 
-        <div className="relative h-full flex items-end">
-          <div className="px-4 sm:px-6 lg:px-8 pb-24 sm:pb-32 max-w-3xl">
+        <div className="relative flex h-full items-end">
+          <div className="max-w-3xl px-4 pb-24 sm:px-6 sm:pb-32 lg:px-8">
             <motion.div
               key={currentHero.id}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="space-y-4 sm:space-y-6"
+              className="space-y-5 sm:space-y-6"
             >
-              {/* Badge with Animation */}
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
-              >
+              <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}>
                 {currentHero.accessType === 'included' ? (
-                  <span className="inline-block badge-included shadow-lg">
-                    ✨ INCLUDED
+                  <span className="inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-cyan-400/12 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-cyan-300 shadow-lg">
+                    <Sparkles className="h-3.5 w-3.5" />
+                    Included
                   </span>
                 ) : (
-                  <span className="inline-block badge-premium shadow-lg">
-                    ⭐ PREMIUM
+                  <span className="inline-flex items-center gap-2 rounded-full border border-amber-400/25 bg-amber-400/14 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.2em] text-amber-300 shadow-lg">
+                    <Crown className="h-3.5 w-3.5" />
+                    Premium
                   </span>
                 )}
               </motion.div>
 
-              {/* Title */}
-              <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight drop-shadow-2xl">
+              <h2 className="text-4xl font-bold leading-tight drop-shadow-2xl sm:text-5xl md:text-6xl lg:text-7xl">
                 {currentHero.title}
               </h2>
 
-              {/* Meta Info */}
               <div className="flex flex-wrap items-center gap-3 text-sm font-medium">
-                <span className="text-green-400 flex items-center gap-1">
-                  ⭐ {currentHero.rating}
+                <span className="inline-flex items-center gap-1 rounded-full bg-white/8 px-3 py-1.5 text-white">
+                  <Star className="h-4 w-4 text-amber-400" fill="currentColor" />
+                  {currentHero.rating}
                 </span>
                 <span className="text-gray-300">•</span>
                 <span className="text-gray-300">{currentHero.year}</span>
                 <span className="text-gray-300">•</span>
                 <span className="text-gray-300">{currentHero.duration}</span>
-                <span className="px-2 py-0.5 bg-white/20 backdrop-blur-sm rounded text-xs font-bold uppercase">
+                <span className="rounded-full border border-white/12 bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em]">
                   {currentHero.language}
                 </span>
               </div>
 
-              {/* Description */}
-              <p className="text-base sm:text-lg text-gray-200 leading-relaxed line-clamp-3 max-w-2xl drop-shadow-lg">
+              <p className="max-w-2xl text-base leading-relaxed text-gray-200/92 drop-shadow-lg sm:text-lg">
                 {currentHero.description}
               </p>
 
-              {/* Action Buttons */}
               <div className="flex flex-wrap gap-3 pt-2">
                 <Button
                   onClick={() => handleContentClick(currentHero)}
                   size="lg"
-                  className="bg-white text-black hover:bg-gray-200 px-8 py-6 text-base font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105 active:scale-95"
+                  className="bg-white px-8 py-6 text-base font-bold text-black shadow-xl transition-all hover:scale-[1.03] hover:bg-gray-200 hover:shadow-2xl active:scale-95"
                 >
-                  <Play className="w-6 h-6 mr-2 fill-current" />
+                  <Play className="mr-2 h-6 w-6 fill-current" />
                   Play Now
                 </Button>
                 <Button
                   onClick={() => handleContentClick(currentHero)}
                   size="lg"
                   variant="outline"
-                  className="glass-effect-strong border-white/30 hover:border-white/50 text-white px-8 py-6 text-base font-semibold hover:scale-105 active:scale-95 transition-all"
+                  className="border-white/25 bg-black/20 px-8 py-6 text-base font-semibold text-white backdrop-blur-md transition-all hover:scale-[1.03] hover:border-white/45 hover:bg-white/10 active:scale-95"
                 >
-                  <Info className="w-6 h-6 mr-2" />
+                  <Info className="mr-2 h-6 w-6" />
                   More Info
                 </Button>
               </div>
             </motion.div>
           </div>
 
-          {/* Mute Button (simulated) */}
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1 }}
             onClick={() => setIsMuted(!isMuted)}
-            className="absolute bottom-32 sm:bottom-40 right-6 sm:right-8 p-3 bg-black/50 hover:bg-black/70 border border-white/30 rounded-full transition-all hover:scale-110"
+            className="absolute bottom-32 right-6 rounded-full border border-white/18 bg-black/45 p-3 transition-all hover:scale-110 hover:bg-black/70 sm:bottom-40 sm:right-8"
           >
-            {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            {isMuted ? <VolumeX className="h-5 w-5" /> : <Volume2 className="h-5 w-5" />}
           </motion.button>
         </div>
 
-        {/* Enhanced Hero Indicators */}
-        <div className="absolute bottom-6 sm:bottom-8 right-6 sm:right-8 flex gap-2">
-          {heroContent.map((_, idx) => (
+        <div className="absolute bottom-6 right-6 flex gap-2 sm:bottom-8 sm:right-8">
+          {heroContent.map((_, index) => (
             <button
-              key={idx}
-              onClick={() => setHeroIndex(idx)}
+              key={index}
+              onClick={() => setHeroIndex(index)}
               className={`h-1 rounded-full transition-all ${
-                idx === heroIndex 
-                  ? 'w-12 bg-cyan-400 shadow-lg shadow-cyan-400/50' 
-                  : 'w-6 bg-gray-600 hover:bg-gray-500'
+                index === heroIndex ? 'w-12 bg-cyan-400 shadow-lg shadow-cyan-400/50' : 'w-6 bg-gray-600 hover:bg-gray-500'
               }`}
-              aria-label={`Go to slide ${idx + 1}`}
+              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
       </div>
 
-      {/* Content Rows */}
-      <div className="relative -mt-20 sm:-mt-32 space-y-10 sm:space-y-12 pb-12">
-        {/* Continue Watching */}
+      <div className="relative z-10 mt-1 space-y-11 pb-12 sm:mt-0 sm:space-y-12">
         {continueWatching.length > 0 && (
           <ContentRow
             title="Continue Watching"
@@ -289,66 +283,67 @@ export default function Home() {
           />
         )}
 
-        {/* Recommended for You */}
         <ContentRow
           title={getRecommendationLabel()}
+          subtitle="Curated around your recent taste"
+          subtitleIcon={Sparkles}
           items={trending.slice(0, 6)}
           onItemClick={handleContentClick}
           onSeeAll={() => navigate('/see-all/recommended')}
         />
 
-        {/* Trending Now */}
         <ContentRow
           title="Trending Now"
-          subtitle="🔥 Most watched this week"
+          subtitle="Most watched this week"
+          subtitleIcon={Flame}
           items={trending}
           onItemClick={handleContentClick}
           onSeeAll={() => navigate('/see-all/trending')}
         />
 
-        {/* Included Movies */}
         <ContentRow
           title="Included Movies"
-          subtitle="✨ Free with your subscription"
+          subtitle="Free with your subscription"
+          subtitleIcon={Sparkles}
           items={includedMovies}
           onItemClick={handleContentClick}
           onSeeAll={() => navigate('/see-all/movies')}
         />
 
-        {/* Premium Movies */}
         <ContentRow
           title="Premium Movies"
-          subtitle="⭐ Subscribe to watch"
+          subtitle="Subscribe to watch"
+          subtitleIcon={Crown}
           items={premiumMovies}
           onItemClick={handleContentClick}
           onSeeAll={() => navigate('/see-all/movies')}
         />
 
-        {/* TV Shows */}
         <ContentRow
           title="TV Shows"
-          subtitle="📺 Binge-worthy series"
+          subtitle="Binge-worthy series"
+          subtitleIcon={Tv2}
           items={tvShows}
           onItemClick={handleContentClick}
           onSeeAll={() => navigate('/see-all/shows')}
         />
 
-        {/* Sports */}
         {sports.length > 0 && (
           <ContentRow
             title="Sports"
-            subtitle="⚽ Live matches & highlights"
+            subtitle="Live matches and highlights"
+            subtitleIcon={Clapperboard}
             items={sports}
             onItemClick={handleContentClick}
             onSeeAll={() => navigate('/see-all/sports')}
           />
         )}
 
-        {/* Kids */}
         {kids.length > 0 && (
           <ContentRow
             title="Kids & Family"
-            subtitle="👨‍👩‍👧‍👦 Safe content for all ages"
+            subtitle="Safe content for all ages"
+            subtitleIcon={Sparkles}
             items={kids}
             onItemClick={handleContentClick}
             onSeeAll={() => navigate('/see-all/kids')}
@@ -359,90 +354,55 @@ export default function Home() {
   );
 }
 
-// Content Row Component
 interface ContentRowProps {
   title: string;
   subtitle?: string;
+  subtitleIcon?: React.ElementType;
   items: Content[];
   onItemClick: (content: Content) => void;
   onSeeAll?: () => void;
   showProgress?: boolean;
 }
 
-const ContentRow: React.FC<ContentRowProps> = ({ title, subtitle, items, onItemClick, onSeeAll, showProgress }) => {
+const ContentRow: React.FC<ContentRowProps> = ({
+  title,
+  subtitle,
+  subtitleIcon: SubtitleIcon,
+  items,
+  onItemClick,
+  onSeeAll,
+  showProgress,
+}) => {
   return (
     <div className="px-4 sm:px-6">
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <div>
-          <h3 className="text-xl sm:text-2xl font-semibold">{title}</h3>
-          {subtitle && <p className="text-sm text-gray-400 mt-1">{subtitle}</p>}
+          <h3 className="text-xl font-semibold sm:text-2xl">{title}</h3>
+          {subtitle && (
+            <p className="mt-1 inline-flex items-center gap-2 text-sm text-gray-400">
+              {SubtitleIcon ? <SubtitleIcon className="h-4 w-4 text-cyan-300" /> : null}
+              {subtitle}
+            </p>
+          )}
         </div>
         {onSeeAll && (
-          <button
-            onClick={onSeeAll}
-            className="text-cyan-400 text-sm flex items-center gap-1 hover:gap-2 transition-all active:scale-95"
-          >
-            See All <ChevronRight className="w-4 h-4" />
+          <button onClick={onSeeAll} className="flex items-center gap-1 text-sm text-cyan-400 transition-all hover:gap-2 active:scale-95">
+            See All <ChevronRight className="h-4 w-4" />
           </button>
         )}
       </div>
-      <div className="flex gap-3 overflow-x-auto scrollbar-hide pb-4">
-        {items.map((item, idx) => (
-          <motion.div
-            key={item.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: idx * 0.05 }}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.98 }}
-            className="flex-shrink-0 w-40 sm:w-48 cursor-pointer group"
-            onClick={() => onItemClick(item)}
-          >
-            <div className="relative rounded-lg overflow-hidden mb-2">
-              <img
-                src={item.thumbnail}
-                alt={item.title}
-                className="w-full aspect-[2/3] object-cover group-hover:scale-110 transition-transform duration-300"
-              />
-              {/* Access Type Badge */}
-              <div className="absolute top-2 left-2">
-                {item.accessType === 'included' ? (
-                  <span className="px-2 py-1 bg-cyan-500 text-black text-xs font-bold rounded">
-                    Included
-                  </span>
-                ) : (
-                  <span className="px-2 py-1 bg-amber-500 text-black text-xs font-bold rounded">
-                    Premium
-                  </span>
-                )}
-              </div>
-              {/* Language Tag */}
-              <div className="absolute top-2 right-2">
-                <span className="px-2 py-1 bg-black/80 backdrop-blur-sm text-white text-xs font-semibold rounded uppercase">
-                  {item.language}
-                </span>
-              </div>
-              {/* Progress Bar */}
-              {showProgress && item.progress && (
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-800">
-                  <div
-                    className="h-full bg-cyan-400"
-                    style={{ width: `${item.progress}%` }}
-                  />
-                </div>
-              )}
-              {/* Hover Overlay */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Play className="w-12 h-12 text-white fill-current" />
-              </div>
-            </div>
-            <h4 className="text-sm font-medium line-clamp-1">{item.title}</h4>
-            <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
-              <span>⭐ {item.rating}</span>
-              <span>•</span>
-              <span>{item.duration}</span>
-            </div>
-          </motion.div>
+
+      <div className="flex items-start gap-5 overflow-x-auto pb-4 scrollbar-hide">
+        {items.map((item, index) => (
+          <div key={item.id} className="w-[160px] shrink-0 sm:w-[180px] md:w-[200px] lg:w-[220px] xl:w-[235px] 2xl:w-[250px]">
+            <MediaCard
+              content={item}
+              index={index}
+              onClick={() => onItemClick(item)}
+              showProgress={showProgress}
+              secondaryMeta="duration"
+            />
+          </div>
         ))}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router';
+import { createHashRouter, Navigate } from 'react-router';
 import Onboarding from './pages/Onboarding';
 import Home from './pages/Home';
 import Discovery from './pages/Discovery';
@@ -8,13 +8,12 @@ import Profile from './pages/Profile';
 import Watchlist from './pages/Watchlist';
 import ContinueWatching from './pages/ContinueWatching';
 import SeeAll from './pages/SeeAll';
-import ProblemSolution from './pages/ProblemSolution';
 import LanguagePreferences from './pages/LanguagePreferences';
 import AppSettings from './pages/AppSettings';
 import ManageSubscription from './pages/ManageSubscription';
 import { RouteGuard } from './components/RouteGuard';
 
-export const router = createBrowserRouter([
+export const router = createHashRouter([
   {
     path: '/',
     element: <RouteGuard />,
@@ -54,10 +53,6 @@ export const router = createBrowserRouter([
   {
     path: '/see-all/:category',
     element: <SeeAll />,
-  },
-  {
-    path: '/problem-solution',
-    element: <ProblemSolution />,
   },
   {
     path: '/settings',

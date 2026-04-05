@@ -1,41 +1,70 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
-import { Check, ChevronRight, Globe, Film, Tv, Trophy, Heart, Zap, Sparkles, Users } from 'lucide-react';
+import {
+  Baby,
+  BookOpenText,
+  Check,
+  ChevronRight,
+  Clapperboard,
+  Globe2,
+  Heart,
+  Languages,
+  MonitorPlay,
+  ShieldAlert,
+  Sparkles,
+  Swords,
+  Trophy,
+  Tv,
+  WandSparkles,
+  Zap,
+} from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useApp } from '../context';
 import { Language, Genre, ContentType } from '../types';
 
-const languages: { value: Language; label: string; flag: string }[] = [
-  { value: 'english', label: 'English', flag: '🇬🇧' },
-  { value: 'hindi', label: 'हिंदी (Hindi)', flag: '🇮🇳' },
-  { value: 'tamil', label: 'தமிழ் (Tamil)', flag: '🇮🇳' },
-  { value: 'telugu', label: 'తెలుగు (Telugu)', flag: '🇮🇳' },
-  { value: 'malayalam', label: 'മലയാളം (Malayalam)', flag: '🇮🇳' },
-  { value: 'kannada', label: 'ಕನ್ನಡ (Kannada)', flag: '🇮🇳' },
-  { value: 'marathi', label: 'मराठी (Marathi)', flag: '🇮🇳' },
+const languages: { value: Language; label: string; icon: React.ReactNode }[] = [
+  { value: 'english', label: 'English', icon: <Globe2 className="h-5 w-5" /> },
+  { value: 'hindi', label: 'Hindi', icon: <Languages className="h-5 w-5" /> },
+  { value: 'tamil', label: 'Tamil', icon: <Languages className="h-5 w-5" /> },
+  { value: 'telugu', label: 'Telugu', icon: <Languages className="h-5 w-5" /> },
+  { value: 'malayalam', label: 'Malayalam', icon: <Languages className="h-5 w-5" /> },
+  { value: 'kannada', label: 'Kannada', icon: <Languages className="h-5 w-5" /> },
+  { value: 'marathi', label: 'Marathi', icon: <Languages className="h-5 w-5" /> },
 ];
 
 const genres: { value: Genre; label: string; icon: React.ReactNode }[] = [
-  { value: 'action', label: 'Action', icon: <Zap className="w-5 h-5" /> },
-  { value: 'comedy', label: 'Comedy', icon: <span className="text-xl">😂</span> },
-  { value: 'drama', label: 'Drama', icon: <Heart className="w-5 h-5" /> },
-  { value: 'thriller', label: 'Thriller', icon: <span className="text-xl">🔪</span> },
-  { value: 'horror', label: 'Horror', icon: <span className="text-xl">👻</span> },
-  { value: 'romance', label: 'Romance', icon: <span className="text-xl">💕</span> },
-  { value: 'sci-fi', label: 'Sci-Fi', icon: <span className="text-xl">🚀</span> },
-  { value: 'documentary', label: 'Documentary', icon: <Film className="w-5 h-5" /> },
-  { value: 'animation', label: 'Animation', icon: <Sparkles className="w-5 h-5" /> },
-  { value: 'sports', label: 'Sports', icon: <Trophy className="w-5 h-5" /> },
-  { value: 'kids', label: 'Kids', icon: <span className="text-xl">👶</span> },
+  { value: 'action', label: 'Action', icon: <Zap className="h-5 w-5" /> },
+  { value: 'comedy', label: 'Comedy', icon: <Sparkles className="h-5 w-5" /> },
+  { value: 'drama', label: 'Drama', icon: <Heart className="h-5 w-5" /> },
+  { value: 'thriller', label: 'Thriller', icon: <Swords className="h-5 w-5" /> },
+  { value: 'horror', label: 'Horror', icon: <ShieldAlert className="h-5 w-5" /> },
+  { value: 'romance', label: 'Romance', icon: <Heart className="h-5 w-5" /> },
+  { value: 'sci-fi', label: 'Sci-Fi', icon: <WandSparkles className="h-5 w-5" /> },
+  { value: 'documentary', label: 'Documentary', icon: <BookOpenText className="h-5 w-5" /> },
+  { value: 'animation', label: 'Animation', icon: <Sparkles className="h-5 w-5" /> },
+  { value: 'sports', label: 'Sports', icon: <Trophy className="h-5 w-5" /> },
+  { value: 'kids', label: 'Kids', icon: <Baby className="h-5 w-5" /> },
 ];
 
-const contentTypes: { value: ContentType; label: string; icon: string; description: string }[] = [
-  { value: 'movie', label: 'Movies', icon: '🎬', description: 'Feature films' },
-  { value: 'show', label: 'TV Shows', icon: '📺', description: 'Series & episodes' },
-  { value: 'sports', label: 'Sports', icon: '⚽', description: 'Live & highlights' },
-  { value: 'kids', label: 'Kids', icon: '👶', description: 'Family friendly' },
+const contentTypes: { value: ContentType; label: string; icon: React.ReactNode; description: string }[] = [
+  { value: 'movie', label: 'Movies', icon: <Clapperboard className="h-8 w-8" />, description: 'Feature films' },
+  { value: 'show', label: 'TV Shows', icon: <Tv className="h-8 w-8" />, description: 'Series and episodes' },
+  { value: 'sports', label: 'Sports', icon: <Trophy className="h-8 w-8" />, description: 'Live and highlights' },
+  { value: 'kids', label: 'Kids', icon: <MonitorPlay className="h-8 w-8" />, description: 'Family friendly' },
 ];
+
+function SelectionState({ selected }: { selected: boolean }) {
+  return (
+    <div
+      className={`flex h-6 w-6 items-center justify-center rounded-full transition-all ${
+        selected ? 'scale-100 bg-cyan-400' : 'scale-0 bg-white/10'
+      }`}
+    >
+      {selected && <Check className="h-4 w-4 text-black" strokeWidth={3} />}
+    </div>
+  );
+}
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -48,23 +77,24 @@ export default function Onboarding() {
 
   const toggleLanguage = (lang: Language) => {
     setShowValidation(false);
-    setSelectedLanguages(prev =>
-      prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]
-    );
+    setSelectedLanguages((prev) => (prev.includes(lang) ? prev.filter((item) => item !== lang) : [...prev, lang]));
   };
 
   const toggleGenre = (genre: Genre) => {
     setShowValidation(false);
-    setSelectedGenres(prev =>
-      prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]
-    );
+    setSelectedGenres((prev) => (prev.includes(genre) ? prev.filter((item) => item !== genre) : [...prev, genre]));
   };
 
   const toggleContentType = (type: ContentType) => {
     setShowValidation(false);
-    setSelectedContentTypes(prev =>
-      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
-    );
+    setSelectedContentTypes((prev) => (prev.includes(type) ? prev.filter((item) => item !== type) : [...prev, type]));
+  };
+
+  const canProceed = () => {
+    if (step === 1) return selectedLanguages.length > 0;
+    if (step === 2) return selectedGenres.length > 0;
+    if (step === 3) return selectedContentTypes.length > 0;
+    return false;
   };
 
   const handleNext = () => {
@@ -76,38 +106,32 @@ export default function Onboarding() {
     if (step < 3) {
       setStep(step + 1);
       setShowValidation(false);
-    } else {
-      updatePreferences({
-        languages: selectedLanguages,
-        genres: selectedGenres,
-        contentTypes: selectedContentTypes,
-      });
-      completeOnboarding();
-      navigate('/home');
+      return;
     }
+
+    updatePreferences({
+      languages: selectedLanguages,
+      genres: selectedGenres,
+      contentTypes: selectedContentTypes,
+    });
+    completeOnboarding();
+    navigate('/home');
   };
 
   const handleSkip = () => {
-    // Skip to next step or complete onboarding with defaults
     if (step < 3) {
       setStep(step + 1);
       setShowValidation(false);
-    } else {
-      updatePreferences({
-        languages: selectedLanguages,
-        genres: selectedGenres.length > 0 ? selectedGenres : ['action', 'drama'],
-        contentTypes: selectedContentTypes,
-      });
-      completeOnboarding();
-      navigate('/home');
+      return;
     }
-  };
 
-  const canProceed = () => {
-    if (step === 1) return selectedLanguages.length > 0;
-    if (step === 2) return selectedGenres.length > 0;
-    if (step === 3) return selectedContentTypes.length > 0;
-    return false;
+    updatePreferences({
+      languages: selectedLanguages,
+      genres: selectedGenres.length > 0 ? selectedGenres : ['action', 'drama'],
+      contentTypes: selectedContentTypes,
+    });
+    completeOnboarding();
+    navigate('/home');
   };
 
   const getStepTitle = () => {
@@ -117,65 +141,57 @@ export default function Onboarding() {
   };
 
   const getStepDescription = () => {
-    if (step === 1) return 'Choose one or more languages for your content';
-    if (step === 2) return 'Select genres you enjoy watching';
-    return 'What type of content do you want to see?';
+    if (step === 1) return 'Choose one or more languages for your content.';
+    if (step === 2) return 'Select the genres you want to see more often.';
+    return 'Pick the content types that should shape your home screen.';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white flex flex-col">
-      {/* Header */}
+    <div className="flex min-h-screen flex-col overflow-hidden bg-linear-to-b from-[#05070b] to-[#0b1220] text-white">
       <div className="p-6 md:p-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between"
         >
-          <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent">
+          <h1 className="bg-gradient-to-r from-cyan-300 to-cyan-500 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent md:text-4xl">
             StreamX
           </h1>
           <button
             onClick={handleSkip}
-            className="text-sm text-gray-400 hover:text-cyan-400 transition-colors underline underline-offset-4"
+            className="text-sm text-gray-400 underline underline-offset-4 transition-colors hover:text-cyan-300"
           >
             Skip
           </button>
         </motion.div>
       </div>
 
-      {/* Progress Indicator */}
-      <div className="px-6 md:px-8 mb-8">
-        <div className="max-w-2xl mx-auto">
-          {/* Step Label */}
+      <div className="mb-6 px-6 md:px-8">
+        <div className="mx-auto max-w-2xl">
           <motion.div
             key={step}
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between mb-3"
+            className="mb-3 flex items-center justify-between"
           >
-            <span className="text-sm font-medium text-gray-400">
-              Step {step} of 3
-            </span>
-            <span className="text-sm font-medium text-cyan-400">
-              {Math.round((step / 3) * 100)}% Complete
-            </span>
+            <span className="text-sm font-medium text-gray-400">Step {step} of 3</span>
+            <span className="text-sm font-medium text-cyan-300">{Math.round((step / 3) * 100)}% Complete</span>
           </motion.div>
 
-          {/* Progress Bars */}
           <div className="flex gap-2">
-            {[1, 2, 3].map((s) => (
+            {[1, 2, 3].map((item) => (
               <motion.div
-                key={s}
+                key={item}
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
-                transition={{ duration: 0.3, delay: s * 0.1 }}
-                className="h-2 flex-1 rounded-full bg-gray-800 overflow-hidden origin-left"
+                transition={{ duration: 0.3, delay: item * 0.1 }}
+                className="h-2 flex-1 origin-left overflow-hidden rounded-full bg-white/8"
               >
                 <motion.div
                   initial={{ width: '0%' }}
-                  animate={{ width: s <= step ? '100%' : '0%' }}
+                  animate={{ width: item <= step ? '100%' : '0%' }}
                   transition={{ duration: 0.5, ease: 'easeOut' }}
-                  className="h-full bg-gradient-to-r from-cyan-500 to-cyan-400 rounded-full"
+                  className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-cyan-500"
                 />
               </motion.div>
             ))}
@@ -183,9 +199,8 @@ export default function Onboarding() {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="flex-1 px-6 md:px-8 pb-6 overflow-y-auto scrollbar-thin">
-        <div className="max-w-4xl mx-auto">
+      <div className="flex-1 overflow-y-auto px-6 pb-[calc(9rem+env(safe-area-inset-bottom))] md:px-8">
+        <div className="mx-auto max-w-4xl">
           <AnimatePresence mode="wait">
             <motion.div
               key={step}
@@ -194,161 +209,178 @@ export default function Onboarding() {
               exit={{ opacity: 0, x: -20 }}
               transition={{ duration: 0.3 }}
             >
-              {/* Step Title */}
               <div className="mb-8 text-center md:text-left">
-                <h2 className="text-2xl md:text-3xl font-bold mb-2">{getStepTitle()}</h2>
-                <p className="text-gray-400 text-base md:text-lg">
-                  {getStepDescription()}
-                </p>
+                <h2 className="mb-3 text-3xl font-extrabold tracking-tight md:text-4xl">{getStepTitle()}</h2>
+                <p className="max-w-2xl text-base leading-relaxed text-[#a3a3a3] md:text-lg">{getStepDescription()}</p>
               </div>
 
-              {/* Validation Message */}
               <AnimatePresence>
                 {showValidation && (
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
-                    className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg"
+                    className="mb-6 flex items-center gap-3 rounded-2xl border border-red-500/30 bg-red-500/10 p-4"
                   >
-                    <p className="text-red-400 text-sm">
-                      ⚠️ Please select at least one option to continue
-                    </p>
+                    <ShieldAlert className="h-4 w-4 shrink-0 text-red-400" />
+                    <p className="text-sm text-red-400">Please select at least one option to continue.</p>
                   </motion.div>
                 )}
               </AnimatePresence>
 
               {step === 1 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-                  {languages.map((lang, idx) => (
-                    <motion.button
-                      key={lang.value}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.05 }}
-                      onClick={() => toggleLanguage(lang.value)}
-                      className={`p-4 md:p-5 rounded-xl border-2 transition-all text-left group relative overflow-hidden ${
-                        selectedLanguages.includes(lang.value)
-                          ? 'border-cyan-500 bg-cyan-500/10'
-                          : 'border-gray-700 hover:border-gray-600 hover:bg-gray-800/30'
-                      }`}
-                    >
-                      {/* Background Glow Effect */}
-                      {selectedLanguages.includes(lang.value) && (
-                        <motion.div
-                          layoutId={`glow-${lang.value}`}
-                          className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-transparent"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                        />
-                      )}
+                <div className="flex flex-wrap gap-3 md:gap-4">
+                  {languages.map((lang, idx) => {
+                    const selected = selectedLanguages.includes(lang.value);
 
-                      <div className="relative flex items-center gap-3">
-                        <span className="text-3xl">{lang.flag}</span>
-                        <div className="flex-1">
-                          <span className="text-base md:text-lg font-medium">{lang.label}</span>
+                    return (
+                      <motion.button
+                        key={lang.value}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.05 }}
+                        whileHover={{ scale: 1.015, y: -2 }}
+                        onClick={() => toggleLanguage(lang.value)}
+                        className={`group relative w-full overflow-hidden rounded-2xl border bg-[#111827]/86 p-4 text-left transition-all duration-200 sm:w-[calc(50%-0.5rem)] md:p-5 ${
+                          selected
+                            ? 'border-cyan-400 shadow-[0_0_0_1px_rgba(34,211,238,0.28),0_18px_40px_rgba(8,145,178,0.18)]'
+                            : 'border-white/10 hover:border-cyan-500/40 hover:shadow-[0_12px_32px_rgba(6,182,212,0.12)]'
+                        }`}
+                      >
+                        {selected && (
+                          <motion.div
+                            layoutId={`glow-${lang.value}`}
+                            className="absolute inset-0 bg-gradient-to-r from-cyan-500/14 to-transparent"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                          />
+                        )}
+
+                        <div className="relative flex items-center gap-3">
+                          <div
+                            className={`flex h-11 w-11 items-center justify-center rounded-full border ${
+                              selected ? 'border-cyan-400/40 bg-cyan-400/12 text-cyan-300' : 'border-white/10 bg-white/5 text-slate-300'
+                            }`}
+                          >
+                            {lang.icon}
+                          </div>
+                          <div className="flex-1">
+                            <span className="text-base font-semibold md:text-lg">{lang.label}</span>
+                          </div>
+                          <SelectionState selected={selected} />
                         </div>
-                        <div className={`flex items-center justify-center w-6 h-6 rounded-full transition-all ${
-                          selectedLanguages.includes(lang.value)
-                            ? 'bg-cyan-500 scale-100'
-                            : 'bg-gray-700 scale-0 group-hover:scale-100'
-                        }`}>
-                          {selectedLanguages.includes(lang.value) && (
-                            <Check className="w-4 h-4 text-black" strokeWidth={3} />
-                          )}
-                        </div>
-                      </div>
-                    </motion.button>
-                  ))}
+                      </motion.button>
+                    );
+                  })}
                 </div>
               )}
 
               {step === 2 && (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4">
-                  {genres.map((genre, idx) => (
-                    <motion.button
-                      key={genre.value}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ delay: idx * 0.05 }}
-                      onClick={() => toggleGenre(genre.value)}
-                      className={`p-4 md:p-5 rounded-xl border-2 transition-all relative overflow-hidden group ${
-                        selectedGenres.includes(genre.value)
-                          ? 'border-cyan-500 bg-cyan-500/10'
-                          : 'border-gray-700 hover:border-gray-600 hover:bg-gray-800/30'
-                      }`}
-                    >
-                      {selectedGenres.includes(genre.value) && (
-                        <motion.div
-                          layoutId={`genre-glow-${genre.value}`}
-                          className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 to-transparent"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                        />
-                      )}
+                <div className="flex flex-wrap gap-3 md:gap-4">
+                  {genres.map((genre, idx) => {
+                    const selected = selectedGenres.includes(genre.value);
 
-                      <div className="relative flex flex-col items-center gap-2 md:gap-3">
-                        <div className="text-cyan-400">
-                          {genre.icon}
-                        </div>
-                        <span className="text-sm md:text-base font-medium text-center">{genre.label}</span>
-                        {selectedGenres.includes(genre.value) && (
+                    return (
+                      <motion.button
+                        key={genre.value}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: idx * 0.05 }}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        onClick={() => toggleGenre(genre.value)}
+                        className={`group relative w-[calc(50%-0.375rem)] overflow-hidden rounded-2xl border bg-[#111827]/86 p-4 transition-all duration-200 sm:w-[calc(33.333%-0.5rem)] md:p-5 lg:w-[calc(25%-0.75rem)] ${
+                          selected
+                            ? 'border-cyan-400 shadow-[0_0_0_1px_rgba(34,211,238,0.28),0_18px_40px_rgba(8,145,178,0.18)]'
+                            : 'border-white/10 hover:border-cyan-500/40 hover:shadow-[0_12px_32px_rgba(6,182,212,0.12)]'
+                        }`}
+                      >
+                        {selected && (
                           <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="absolute -top-1 -right-1 w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center"
-                          >
-                            <Check className="w-3 h-3 text-black" strokeWidth={3} />
-                          </motion.div>
+                            layoutId={`genre-glow-${genre.value}`}
+                            className="absolute inset-0 bg-gradient-to-br from-cyan-500/14 to-transparent"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                          />
                         )}
-                      </div>
-                    </motion.button>
-                  ))}
+
+                        <div className="relative flex flex-col items-center gap-3">
+                          <div
+                            className={`flex h-11 w-11 items-center justify-center rounded-full border ${
+                              selected ? 'border-cyan-400/40 bg-cyan-400/12 text-cyan-300' : 'border-white/10 bg-white/5 text-slate-300'
+                            }`}
+                          >
+                            {genre.icon}
+                          </div>
+                          <span className="text-center text-sm font-semibold md:text-base">{genre.label}</span>
+                          {selected && (
+                            <motion.div
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-cyan-400"
+                            >
+                              <Check className="h-3 w-3 text-black" strokeWidth={3} />
+                            </motion.div>
+                          )}
+                        </div>
+                      </motion.button>
+                    );
+                  })}
                 </div>
               )}
 
               {step === 3 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 max-w-3xl mx-auto">
-                  {contentTypes.map((type, idx) => (
-                    <motion.button
-                      key={type.value}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      onClick={() => toggleContentType(type.value)}
-                      className={`p-6 md:p-8 rounded-2xl border-2 transition-all relative overflow-hidden group ${
-                        selectedContentTypes.includes(type.value)
-                          ? 'border-cyan-500 bg-cyan-500/10'
-                          : 'border-gray-700 hover:border-gray-600 hover:bg-gray-800/30'
-                      }`}
-                    >
-                      {selectedContentTypes.includes(type.value) && (
-                        <motion.div
-                          layoutId={`content-glow-${type.value}`}
-                          className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-cyan-500/5 to-transparent"
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                        />
-                      )}
+                <div className="mx-auto flex max-w-3xl flex-wrap gap-4 md:gap-5">
+                  {contentTypes.map((type, idx) => {
+                    const selected = selectedContentTypes.includes(type.value);
 
-                      <div className="relative flex flex-col items-center gap-3 md:gap-4">
-                        <span className="text-5xl md:text-6xl">{type.icon}</span>
-                        <div className="text-center">
-                          <h3 className="text-lg md:text-xl font-semibold mb-1">{type.label}</h3>
-                          <p className="text-sm text-gray-400">{type.description}</p>
-                        </div>
-                        {selectedContentTypes.includes(type.value) && (
+                    return (
+                      <motion.button
+                        key={type.value}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: idx * 0.1 }}
+                        whileHover={{ scale: 1.02, y: -2 }}
+                        onClick={() => toggleContentType(type.value)}
+                        className={`group relative w-full overflow-hidden rounded-[24px] border bg-[#111827]/86 p-6 transition-all duration-200 sm:w-[calc(50%-0.625rem)] md:p-8 ${
+                          selected
+                            ? 'border-cyan-400 shadow-[0_0_0_1px_rgba(34,211,238,0.28),0_18px_40px_rgba(8,145,178,0.18)]'
+                            : 'border-white/10 hover:border-cyan-500/40 hover:shadow-[0_12px_32px_rgba(6,182,212,0.12)]'
+                        }`}
+                      >
+                        {selected && (
                           <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="absolute top-4 right-4 w-8 h-8 bg-cyan-500 rounded-full flex items-center justify-center"
-                          >
-                            <Check className="w-4 h-4 text-black" strokeWidth={3} />
-                          </motion.div>
+                            layoutId={`content-glow-${type.value}`}
+                            className="absolute inset-0 bg-gradient-to-br from-cyan-500/14 via-cyan-500/5 to-transparent"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                          />
                         )}
-                      </div>
-                    </motion.button>
-                  ))}
+
+                        <div className="relative flex flex-col items-center gap-4">
+                          <div
+                            className={`flex h-16 w-16 items-center justify-center rounded-2xl border ${
+                              selected ? 'border-cyan-400/40 bg-cyan-400/12 text-cyan-300' : 'border-white/10 bg-white/5 text-slate-300'
+                            }`}
+                          >
+                            {type.icon}
+                          </div>
+                          <div className="text-center">
+                            <h3 className="mb-1 text-lg font-bold md:text-xl">{type.label}</h3>
+                            <p className="text-sm text-[#a3a3a3]">{type.description}</p>
+                          </div>
+                          {selected && (
+                            <motion.div
+                              initial={{ scale: 0 }}
+                              animate={{ scale: 1 }}
+                              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400"
+                            >
+                              <Check className="h-4 w-4 text-black" strokeWidth={3} />
+                            </motion.div>
+                          )}
+                        </div>
+                      </motion.button>
+                    );
+                  })}
                 </div>
               )}
             </motion.div>
@@ -356,35 +388,34 @@ export default function Onboarding() {
         </div>
       </div>
 
-      {/* Footer */}
-      <div className="p-6 md:p-8 border-t border-gray-800/50 backdrop-blur-sm bg-black/50">
-        <div className="max-w-2xl mx-auto flex gap-3 md:gap-4">
+      <div className="sticky bottom-0 z-20 border-t border-white/8 bg-[#05070b]/96 p-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-[0_-16px_40px_rgba(0,0,0,0.42)] backdrop-blur-xl md:p-8 md:pb-[calc(2rem+env(safe-area-inset-bottom))]">
+        <div className="mx-auto flex max-w-2xl gap-3 md:gap-4">
           {step > 1 && (
             <Button
               variant="outline"
               onClick={() => setStep(step - 1)}
-              className="flex-1 bg-gray-800/50 border-gray-700 hover:bg-gray-700 text-white h-12 md:h-14 text-base font-semibold"
+              className="h-12 flex-1 rounded-2xl border-white/10 bg-white/5 text-base font-semibold text-white hover:bg-white/10 md:h-14"
             >
               Back
             </Button>
           )}
           <Button
             onClick={handleNext}
-            className={`flex-1 h-12 md:h-14 text-base font-semibold transition-all ${
+            className={`h-12 flex-1 rounded-2xl text-base font-semibold transition-all md:h-14 ${
               canProceed()
-                ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-black shadow-lg shadow-cyan-500/30'
-                : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-cyan-400 to-cyan-500 text-black shadow-[0_18px_40px_rgba(6,182,212,0.28)] hover:from-cyan-300 hover:to-cyan-500'
+                : 'cursor-not-allowed bg-white/8 text-gray-400'
             }`}
           >
             {step === 3 ? (
               <>
                 Get Started
-                <ChevronRight className="w-5 h-5 ml-1" />
+                <ChevronRight className="ml-1 h-5 w-5" />
               </>
             ) : (
               <>
                 Continue
-                <ChevronRight className="w-5 h-5 ml-1" />
+                <ChevronRight className="ml-1 h-5 w-5" />
               </>
             )}
           </Button>

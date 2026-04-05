@@ -1,12 +1,13 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Filter, X, ArrowLeft, SlidersHorizontal, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Search, SlidersHorizontal, TrendingUp, X, SearchX } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useApp } from '../context';
 import { mockContent } from '../data/mockData';
-import { Content, Language, Genre, ContentType, AccessType } from '../types';
+import { ContentType, Genre, Language, AccessType } from '../types';
 import { GridSkeleton } from '../components/SkeletonLoader';
+import MediaCard from '../components/MediaCard';
 
 const languages: { value: Language; label: string }[] = [
   { value: 'english', label: 'English' },
@@ -42,7 +43,6 @@ const contentTypes: { value: ContentType; label: string }[] = [
 export default function Discovery() {
   const navigate = useNavigate();
   const { preferences } = useApp();
-  
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -53,55 +53,42 @@ export default function Discovery() {
   const [selectedContentTypes, setSelectedContentTypes] = useState<ContentType[]>([]);
   const [sortBy, setSortBy] = useState<'relevance' | 'rating' | 'year'>('relevance');
 
-  // Debounce search
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedSearch(searchQuery);
-    }, 300);
+    const timer = setTimeout(() => setDebouncedSearch(searchQuery), 300);
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Simulate loading
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 800);
     return () => clearTimeout(timer);
   }, []);
 
-  // Filter and sort content
   const filteredContent = useMemo(() => {
     let results = [...mockContent];
 
-    // Search query
     if (debouncedSearch) {
-      results = results.filter(item =>
+      results = results.filter((item) =>
         item.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
         item.description.toLowerCase().includes(debouncedSearch.toLowerCase())
       );
     }
 
-    // Access type filter
     if (selectedAccessType !== 'all') {
-      results = results.filter(item => item.accessType === selectedAccessType);
+      results = results.filter((item) => item.accessType === selectedAccessType);
     }
 
-    // Language filter
     if (selectedLanguages.length > 0) {
-      results = results.filter(item => selectedLanguages.includes(item.language));
+      results = results.filter((item) => selectedLanguages.includes(item.language));
     }
 
-    // Genre filter
     if (selectedGenres.length > 0) {
-      results = results.filter(item =>
-        item.genre.some(g => selectedGenres.includes(g))
-      );
+      results = results.filter((item) => item.genre.some((genre) => selectedGenres.includes(genre)));
     }
 
-    // Content type filter
     if (selectedContentTypes.length > 0) {
-      results = results.filter(item => selectedContentTypes.includes(item.type));
+      results = results.filter((item) => selectedContentTypes.includes(item.type));
     }
 
-    // Sort
     if (sortBy === 'rating') {
       results.sort((a, b) => b.rating - a.rating);
     } else if (sortBy === 'year') {
@@ -112,21 +99,15 @@ export default function Discovery() {
   }, [debouncedSearch, selectedAccessType, selectedLanguages, selectedGenres, selectedContentTypes, sortBy]);
 
   const toggleLanguage = (lang: Language) => {
-    setSelectedLanguages(prev =>
-      prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]
-    );
+    setSelectedLanguages((prev) => (prev.includes(lang) ? prev.filter((item) => item !== lang) : [...prev, lang]));
   };
 
   const toggleGenre = (genre: Genre) => {
-    setSelectedGenres(prev =>
-      prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]
-    );
+    setSelectedGenres((prev) => (prev.includes(genre) ? prev.filter((item) => item !== genre) : [...prev, genre]));
   };
 
   const toggleContentType = (type: ContentType) => {
-    setSelectedContentTypes(prev =>
-      prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
-    );
+    setSelectedContentTypes((prev) => (prev.includes(type) ? prev.filter((item) => item !== type) : [...prev, type]));
   };
 
   const clearFilters = () => {
@@ -137,80 +118,77 @@ export default function Discovery() {
     setSortBy('relevance');
   };
 
-  const activeFiltersCount = 
+  const activeFiltersCount =
     (selectedAccessType !== 'all' ? 1 : 0) +
     selectedGenres.length +
     selectedContentTypes.length;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white">
-      {/* Sticky Header */}
-      <div className="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-gray-800/50 shadow-xl">
-        <div className="px-4 sm:px-6 lg:px-8 py-4">
-          {/* Top Bar */}
-          <div className="flex items-center gap-4 mb-4">
+    <div className="min-h-screen bg-linear-to-b from-[#02060c] to-[#09111d] text-white">
+      <div className="sticky top-0 z-50 border-b border-white/8 bg-[#02060c]/94 shadow-xl backdrop-blur-xl">
+        <div className="px-4 py-4 sm:px-6 lg:px-8">
+          <div className="mb-4 flex items-center gap-4">
             <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={{ scale: 1.08 }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => navigate('/home')}
-              className="p-2 hover:bg-white/10 rounded-full transition-colors"
+              className="rounded-full border border-white/10 bg-white/6 p-2 transition-colors hover:bg-white/10"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="h-5 w-5" />
             </motion.button>
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-600 bg-clip-text text-transparent">
+            <h1 className="bg-gradient-to-r from-cyan-300 to-cyan-500 bg-clip-text text-2xl font-bold tracking-tight text-transparent md:text-3xl">
               Browse & Discover
             </h1>
           </div>
 
-          {/* Search Bar with Live Suggestions */}
           <div className="relative mb-4">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search movies, shows, sports..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-900/80 text-white pl-12 pr-12 py-3.5 rounded-xl border-2 border-gray-800 focus:border-cyan-500 focus:outline-none transition-all placeholder:text-gray-500"
+              onChange={(event) => setSearchQuery(event.target.value)}
+              className="w-full rounded-2xl border border-white/10 bg-[#0f172a]/88 py-3.5 pl-12 pr-12 text-white transition-all placeholder:text-gray-500 focus:border-cyan-400/70 focus:outline-none focus:ring-2 focus:ring-cyan-400/20"
             />
             {searchQuery && (
               <motion.button
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 hover:bg-gray-700 rounded-full transition-colors"
+                className="absolute right-3 top-1/2 rounded-full border border-white/10 bg-white/5 p-1.5 transition-colors hover:bg-white/10"
               >
-                <X className="w-4 h-4" />
+                <X className="h-4 w-4" />
               </motion.button>
             )}
           </div>
 
-          {/* Filter Controls */}
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex flex-wrap items-center gap-3">
             <Button
               onClick={() => setShowFilters(!showFilters)}
               variant="outline"
-              className={`bg-gray-900/80 border-gray-700 hover:bg-gray-800 transition-all ${
-                showFilters ? 'border-cyan-500 bg-cyan-500/10' : ''
+              className={`rounded-2xl border px-4 py-2.5 text-sm font-semibold shadow-sm transition-all ${
+                showFilters
+                  ? 'border-cyan-400/70 bg-cyan-400/14 text-cyan-200 shadow-[0_10px_30px_rgba(6,182,212,0.18)]'
+                  : 'border-white/12 bg-[#111827] text-white hover:border-cyan-400/45 hover:bg-[#162033]'
               }`}
             >
-              <SlidersHorizontal className="w-4 h-4 mr-2" />
+              <SlidersHorizontal className="mr-2 h-4 w-4" />
               Filters
               {activeFiltersCount > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className="ml-2 px-2 py-0.5 bg-cyan-500 text-black text-xs font-bold rounded-full"
+                  className="ml-2 rounded-full bg-cyan-400 px-2 py-0.5 text-xs font-bold text-black"
                 >
                   {activeFiltersCount}
                 </motion.span>
               )}
             </Button>
 
-            {/* Sort Dropdown */}
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as 'relevance' | 'rating' | 'year')}
-              className="px-4 py-2.5 bg-gray-900/80 border-2 border-gray-700 rounded-xl text-sm focus:border-cyan-500 focus:outline-none transition-all cursor-pointer"
+              onChange={(event) => setSortBy(event.target.value as 'relevance' | 'rating' | 'year')}
+              className="cursor-pointer rounded-2xl border border-white/12 bg-[#111827] px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-all hover:border-cyan-400/45 focus:border-cyan-400/70 focus:outline-none"
             >
               <option value="relevance">Sort: Relevance</option>
               <option value="rating">Sort: Rating</option>
@@ -222,7 +200,7 @@ export default function Discovery() {
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 onClick={clearFilters}
-                className="text-sm text-cyan-400 hover:text-cyan-300 font-medium underline underline-offset-4"
+                className="text-sm font-medium text-cyan-300 underline underline-offset-4 transition-colors hover:text-cyan-200"
               >
                 Clear All
               </motion.button>
@@ -230,163 +208,92 @@ export default function Discovery() {
           </div>
         </div>
 
-        {/* Expandable Filter Panel */}
         <AnimatePresence>
           {showFilters && (
             <motion.div
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="border-t border-gray-800/50 bg-gradient-to-b from-gray-900/95 to-gray-900/80 backdrop-blur-md overflow-hidden"
+              transition={{ duration: 0.28 }}
+              className="overflow-hidden border-t border-white/8 bg-[#08111d]/96"
             >
-              <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 max-h-[60vh] overflow-y-auto scrollbar-thin">
-                {/* Access Type */}
-                <div>
-                  <h3 className="text-sm font-bold mb-3 text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                    <span className="w-1 h-4 bg-cyan-500 rounded-full" />
-                    Content Access
-                  </h3>
-                  <div className="flex gap-2 flex-wrap">
-                    {['all', 'included', 'premium'].map((type) => (
-                      <motion.button
-                        key={type}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setSelectedAccessType(type as AccessType | 'all')}
-                        className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${
-                          selectedAccessType === type
-                            ? 'bg-gradient-to-r from-cyan-500 to-cyan-600 text-black shadow-lg shadow-cyan-500/30'
-                            : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                        }`}
-                      >
-                        {type === 'all' ? 'All Content' : type.charAt(0).toUpperCase() + type.slice(1)}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
+              <div className="scrollbar-thin max-h-[60vh] space-y-6 overflow-y-auto px-4 py-6 sm:px-6 lg:px-8">
+                <FilterSection title="Content Access">
+                  {['all', 'included', 'premium'].map((type) => (
+                    <FilterButton
+                      key={type}
+                      active={selectedAccessType === type}
+                      label={type === 'all' ? 'All Content' : type.charAt(0).toUpperCase() + type.slice(1)}
+                      onClick={() => setSelectedAccessType(type as AccessType | 'all')}
+                    />
+                  ))}
+                </FilterSection>
 
-                {/* Languages */}
-                <div>
-                  <h3 className="text-sm font-bold mb-3 text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                    <span className="w-1 h-4 bg-cyan-500 rounded-full" />
-                    Languages
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {languages.map((lang) => (
-                      <motion.button
-                        key={lang.value}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => toggleLanguage(lang.value)}
-                        className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
-                          selectedLanguages.includes(lang.value)
-                            ? 'bg-cyan-500 text-black shadow-md'
-                            : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                        }`}
-                      >
-                        {lang.label}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
+                <FilterSection title="Languages">
+                  {languages.map((language) => (
+                    <FilterButton
+                      key={language.value}
+                      active={selectedLanguages.includes(language.value)}
+                      label={language.label}
+                      onClick={() => toggleLanguage(language.value)}
+                    />
+                  ))}
+                </FilterSection>
 
-                {/* Genres */}
-                <div>
-                  <h3 className="text-sm font-bold mb-3 text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                    <span className="w-1 h-4 bg-cyan-500 rounded-full" />
-                    Genres
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {genres.map((genre) => (
-                      <motion.button
-                        key={genre.value}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => toggleGenre(genre.value)}
-                        className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
-                          selectedGenres.includes(genre.value)
-                            ? 'bg-cyan-500 text-black shadow-md'
-                            : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                        }`}
-                      >
-                        {genre.label}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
+                <FilterSection title="Genres">
+                  {genres.map((genre) => (
+                    <FilterButton
+                      key={genre.value}
+                      active={selectedGenres.includes(genre.value)}
+                      label={genre.label}
+                      onClick={() => toggleGenre(genre.value)}
+                    />
+                  ))}
+                </FilterSection>
 
-                {/* Content Type */}
-                <div>
-                  <h3 className="text-sm font-bold mb-3 text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                    <span className="w-1 h-4 bg-cyan-500 rounded-full" />
-                    Content Type
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {contentTypes.map((type) => (
-                      <motion.button
-                        key={type.value}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => toggleContentType(type.value)}
-                        className={`px-3 py-2 rounded-full text-sm font-medium transition-all ${
-                          selectedContentTypes.includes(type.value)
-                            ? 'bg-cyan-500 text-black shadow-md'
-                            : 'bg-gray-800 hover:bg-gray-700 text-gray-300'
-                        }`}
-                      >
-                        {type.label}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
+                <FilterSection title="Content Type">
+                  {contentTypes.map((type) => (
+                    <FilterButton
+                      key={type.value}
+                      active={selectedContentTypes.includes(type.value)}
+                      label={type.label}
+                      onClick={() => toggleContentType(type.value)}
+                    />
+                  ))}
+                </FilterSection>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Results Section */}
-      <div className="px-4 sm:px-6 lg:px-8 py-8">
-        {/* Active Filters Display */}
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
         <AnimatePresence>
           {(selectedAccessType !== 'all' || selectedGenres.length > 0 || selectedContentTypes.length > 0) && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
-              className="mb-6 p-4 bg-gradient-to-r from-gray-900/80 to-gray-800/80 rounded-xl border border-gray-700/50 backdrop-blur-sm"
+              className="mb-6 rounded-2xl border border-white/8 bg-[#0f172a]/86 p-4 backdrop-blur-md"
             >
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-bold text-gray-300 uppercase tracking-wider flex items-center gap-2">
-                  <TrendingUp className="w-4 h-4 text-cyan-400" />
+              <div className="mb-3 flex items-center justify-between">
+                <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-gray-300">
+                  <TrendingUp className="h-4 w-4 text-cyan-300" />
                   Active Filters
                 </h3>
-                <button
-                  onClick={clearFilters}
-                  className="text-xs text-cyan-400 hover:text-cyan-300 font-medium"
-                >
+                <button onClick={clearFilters} className="text-xs font-medium text-cyan-300 hover:text-cyan-200">
                   Clear all
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {selectedAccessType !== 'all' && (
-                  <FilterChip
-                    label={selectedAccessType}
-                    onRemove={() => setSelectedAccessType('all')}
-                  />
-                )}
+                {selectedAccessType !== 'all' && <FilterChip label={selectedAccessType} onRemove={() => setSelectedAccessType('all')} />}
                 {selectedGenres.map((genre) => (
-                  <FilterChip
-                    key={genre}
-                    label={genre}
-                    onRemove={() => toggleGenre(genre)}
-                  />
+                  <FilterChip key={genre} label={genre} onRemove={() => toggleGenre(genre)} />
                 ))}
                 {selectedContentTypes.map((type) => (
                   <FilterChip
                     key={type}
-                    label={contentTypes.find(t => t.value === type)?.label || type}
+                    label={contentTypes.find((entry) => entry.value === type)?.label || type}
                     onRemove={() => toggleContentType(type)}
                   />
                 ))}
@@ -395,51 +302,45 @@ export default function Discovery() {
           )}
         </AnimatePresence>
 
-        {/* Results Count */}
         <div className="mb-6 flex items-center justify-between">
           <p className="text-sm text-gray-400">
             {isLoading ? (
-              <span className="skeleton h-4 w-32 rounded inline-block" />
+              <span className="skeleton inline-block h-4 w-32 rounded" />
             ) : (
               <>
-                Showing <span className="font-bold text-cyan-400">{filteredContent.length}</span> results
+                Showing <span className="font-bold text-cyan-300">{filteredContent.length}</span> results
                 {searchQuery && (
-                  <> for "<span className="font-semibold text-white">{searchQuery}</span>"</>
+                  <>
+                    {' '}for "<span className="font-semibold text-white">{searchQuery}</span>"
+                  </>
                 )}
               </>
             )}
           </p>
         </div>
 
-        {/* Content Grid */}
         {isLoading ? (
           <GridSkeleton count={12} />
         ) : filteredContent.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-20"
-          >
-            <div className="mb-4 text-6xl">🔍</div>
-            <h3 className="text-2xl font-bold mb-2">No results found</h3>
-            <p className="text-gray-400 mb-6">
-              Try adjusting your filters or search query
-            </p>
-            <Button
-              onClick={clearFilters}
-              className="bg-gradient-to-r from-cyan-500 to-cyan-600 hover:from-cyan-600 hover:to-cyan-700 text-black font-semibold"
-            >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="py-20 text-center">
+            <div className="mx-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full border border-white/8 bg-[#111827]">
+              <SearchX className="h-10 w-10 text-gray-500" />
+            </div>
+            <h3 className="mb-2 text-2xl font-bold">No results found</h3>
+            <p className="mb-6 text-gray-400">Try adjusting your filters or search query.</p>
+            <Button onClick={clearFilters} className="bg-gradient-to-r from-cyan-400 to-cyan-500 font-semibold text-black hover:from-cyan-300 hover:to-cyan-500">
               Clear Filters
             </Button>
           </motion.div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-            {filteredContent.map((item, idx) => (
-              <ContentCard
+          <div className="grid grid-cols-2 gap-4 md:gap-6 lg:grid-cols-5 xl:grid-cols-6">
+            {filteredContent.map((item, index) => (
+              <MediaCard
                 key={item.id}
                 content={item}
-                index={idx}
+                index={index}
                 onClick={() => navigate(`/content/${item.id}`)}
+                secondaryMeta="year"
               />
             ))}
           </div>
@@ -449,79 +350,41 @@ export default function Discovery() {
   );
 }
 
-// Filter Chip Component
+function FilterSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <h3 className="mb-3 text-sm font-bold uppercase tracking-wider text-gray-300">{title}</h3>
+      <div className="flex flex-wrap gap-2">{children}</div>
+    </div>
+  );
+}
+
+function FilterButton({ active, label, onClick }: { active: boolean; label: string; onClick: () => void }) {
+  return (
+    <motion.button
+      whileHover={{ scale: 1.03 }}
+      whileTap={{ scale: 0.97 }}
+      onClick={onClick}
+      className={`rounded-full border px-4 py-2 text-sm font-medium transition-all ${
+        active
+          ? 'border-cyan-400/50 bg-cyan-400/14 text-cyan-200 shadow-[0_12px_28px_rgba(6,182,212,0.16)]'
+          : 'border-white/10 bg-white/6 text-gray-300 hover:border-cyan-400/35 hover:bg-white/10'
+      }`}
+    >
+      {label}
+    </motion.button>
+  );
+}
+
 const FilterChip = ({ label, onRemove }: { label: string; onRemove: () => void }) => (
   <motion.button
     initial={{ scale: 0 }}
     animate={{ scale: 1 }}
     exit={{ scale: 0 }}
     onClick={onRemove}
-    className="flex items-center gap-2 px-3 py-1.5 bg-cyan-500/20 border border-cyan-500/50 text-cyan-400 rounded-full text-sm hover:bg-cyan-500/30 transition-all group"
+    className="group flex items-center gap-2 rounded-full border border-cyan-400/28 bg-cyan-400/12 px-3 py-1.5 text-sm text-cyan-200 transition-all hover:bg-cyan-400/18"
   >
     <span className="capitalize font-medium">{label}</span>
-    <X className="w-3 h-3 group-hover:scale-110 transition-transform" />
+    <X className="h-3 w-3 transition-transform group-hover:scale-110" />
   </motion.button>
-);
-
-// Content Card Component
-const ContentCard = ({ 
-  content, 
-  index, 
-  onClick 
-}: { 
-  content: Content; 
-  index: number; 
-  onClick: () => void;
-}) => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.3, delay: index * 0.03 }}
-    whileHover={{ scale: 1.05, zIndex: 10 }}
-    whileTap={{ scale: 0.98 }}
-    onClick={onClick}
-    className="cursor-pointer group"
-  >
-    <div className="relative rounded-xl overflow-hidden mb-3 shadow-lg hover:shadow-2xl transition-shadow">
-      <img
-        src={content.thumbnail}
-        alt={content.title}
-        className="w-full aspect-[2/3] object-cover group-hover:scale-110 transition-transform duration-500"
-        loading="lazy"
-      />
-      
-      {/* Badges */}
-      <div className="absolute top-2 left-2">
-        {content.accessType === 'included' ? (
-          <span className="badge-included">Included</span>
-        ) : (
-          <span className="badge-premium">Premium</span>
-        )}
-      </div>
-      <div className="absolute top-2 right-2">
-        <span className="px-2 py-1 bg-black/80 backdrop-blur-sm text-white text-xs font-semibold rounded uppercase">
-          {content.language}
-        </span>
-      </div>
-      
-      {/* Hover Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-        <div className="transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-          <p className="text-xs text-gray-300 mb-1">
-            ⭐ {content.rating} • {content.year}
-          </p>
-          <p className="text-xs text-gray-400 line-clamp-2">{content.description}</p>
-        </div>
-      </div>
-    </div>
-    
-    <h4 className="text-sm font-semibold line-clamp-1 mb-1">{content.title}</h4>
-    <div className="flex items-center gap-2 text-xs text-gray-400">
-      <span className="flex items-center gap-1">
-        ⭐ {content.rating}
-      </span>
-      <span>•</span>
-      <span>{content.duration}</span>
-    </div>
-  </motion.div>
 );

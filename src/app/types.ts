@@ -10,6 +10,7 @@ export interface Content {
   title: string;
   description: string;
   thumbnail: string;
+  backdrop?: string;
   type: ContentType;
   accessType: AccessType;
   genre: Genre[];
@@ -27,4 +28,9 @@ export interface UserPreferences {
   genres: Genre[];
   contentTypes: ContentType[];
   onboardingCompleted: boolean;
+}
+
+export interface UserProfile {
+  name: string;
+  avatarIndex: number;
 }

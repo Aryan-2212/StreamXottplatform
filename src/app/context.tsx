@@ -1,9 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserPreferences, Language, Genre, ContentType } from './types';
+import { UserPreferences, UserProfile } from './types';
 
 interface AppContextType {
   preferences: UserPreferences;
+  profile: UserProfile;
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
+  updateProfile: (profile: Partial<UserProfile>) => void;
   completeOnboarding: () => void;
 }
 
@@ -12,6 +14,11 @@ const defaultPreferences: UserPreferences = {
   genres: [],
   contentTypes: ['movie', 'show', 'sports', 'kids'],
   onboardingCompleted: false,
+};
+
+const defaultProfile: UserProfile = {
+  name: 'Aarav Mehta',
+  avatarIndex: 0,
 };
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -29,12 +36,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return defaultPreferences;
   });
 
+  const [profile, setProfile] = useState<UserProfile>(() => {
+    const stored = localStorage.getItem('streamx-profile');
+    if (stored) {
+      try {
+        return { ...defaultProfile, ...JSON.parse(stored) };
+      } catch {
+        return defaultProfile;
+      }
+    }
+    return defaultProfile;
+  });
+
   useEffect(() => {
     localStorage.setItem('streamx-preferences', JSON.stringify(preferences));
   }, [preferences]);
 
+  useEffect(() => {
+    localStorage.setItem('streamx-profile', JSON.stringify(profile));
+  }, [profile]);
+
   const updatePreferences = (updates: Partial<UserPreferences>) => {
     setPreferences(prev => ({ ...prev, ...updates }));
+  };
+
+  const updateProfile = (updates: Partial<UserProfile>) => {
+    setProfile(prev => ({ ...prev, ...updates }));
   };
 
   const completeOnboarding = () => {
@@ -42,7 +69,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   return (
-    <AppContext.Provider value={{ preferences, updatePreferences, completeOnboarding }}>
+    <AppContext.Provider value={{ preferences, profile, updatePreferences, updateProfile, completeOnboarding }}>
       {children}
     </AppContext.Provider>
   );

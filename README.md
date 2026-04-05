@@ -1,11 +1,22 @@
+# StreamX
 
-  # Design SmartStream OTT Platform
+StreamX is a frontend OTT streaming platform built with React, Vite, and TypeScript. It includes onboarding, browsing rows, content detail views, watchlist flows, settings, and subscription screens in a polished streaming-style UI.
 
-  This is a code bundle for Design SmartStream OTT Platform. The original project is available at https://www.figma.com/design/5DAUE9k4XQcEVOinA29Kog/Design-SmartStream-OTT-Platform.
+## Local development
 
-  ## Running the code
+1. Install dependencies with `npm install`
+2. Start the dev server with `npm run dev`
 
-  Run `npm i` to install the dependencies.
+## Production build
 
-  Run `npm run dev` to start the development server.
-  
+Build the app with:
+
+`npm run build`
+
+## GitHub Pages
+
+This repo is configured for GitHub Pages deployment from GitHub Actions and is served from:
+
+`/StreamXottplatform/`
+
+After pushing the code, open the repository settings on GitHub and set Pages to deploy from `GitHub Actions`.
