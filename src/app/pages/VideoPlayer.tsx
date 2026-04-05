@@ -220,7 +220,7 @@ export default function VideoPlayer() {
 
   function handleBack() {
     clearHideControlsTimeout();
-    navigate(-1);
+    navigate(`/content/${content.id}`);
   }
 
   function handleSurfaceClick() {
