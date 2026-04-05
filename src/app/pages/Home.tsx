@@ -76,6 +76,10 @@ export default function Home() {
     navigate(`/content/${content.id}`);
   };
 
+  const handlePlayNow = (content: Content) => {
+    navigate(`/player/${content.id}`);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-[#02060c] text-white">
@@ -227,7 +231,7 @@ export default function Home() {
 
               <div className="flex flex-wrap gap-3 pt-2">
                 <Button
-                  onClick={() => handleContentClick(currentHero)}
+                  onClick={() => handlePlayNow(currentHero)}
                   size="lg"
                   className="bg-white px-8 py-6 text-base font-bold text-black shadow-xl transition-all hover:scale-[1.03] hover:bg-gray-200 hover:shadow-2xl active:scale-95"
                 >
